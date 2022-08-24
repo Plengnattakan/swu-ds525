@@ -2,7 +2,7 @@ import psycopg2
 
 table_drop_repo = "DROP TABLE IF EXISTS Repo"
 table_drop_actor = "DROP TABLE IF EXISTS Actor"
-table_drop_user = "DROP TABLE IF EXISTS User"
+table_drop_user = "DROP TABLE IF EXISTS UserT"
 table_drop_comment = "DROP TABLE IF EXISTS Comment"
 table_drop_event = "DROP TABLE IF EXISTS Event"
 
@@ -42,17 +42,17 @@ table_create_comment = """
         html_url VARCHAR(200) NOT NULL,
         issue_url VARCHAR(200) NOT NULL,
         node_id VARCHAR(30) NOT NULL,
-        user_id INT NOT NULL,
+        user_id BIGINT,
         created_at TIMESTAMP NOT NULL,
         updated_at TIMESTAMP NOT NULL,
         author_association VARCHAR(50) NOT NULL,
         body VARCHAR(200) NOT NULL,
         performed_via_github_app VARCHAR(50) ,
-        PRIMARY KEY (comment_id),
-        FOREIGN KEY (user_id) REFERENCES UserT (user_id)
+        PRIMARY KEY (comment_id)
+        
     )
 """
-
+#FOREIGN KEY (user_id) REFERENCES UserT (user_id)
 
 table_create_event = """
     CREATE TABLE IF NOT EXISTS Event (
@@ -60,21 +60,21 @@ table_create_event = """
         type VARCHAR(50) NOT NULL,
         public VARCHAR(10) NOT NULL,
         create_at TIMESTAMP NOT NULL,
-        repo_id INT NOT NULL,
-        actor_id INT NOT NULL,
-        comment_id INT NOT NULL,
-        PRIMARY KEY (event_id),
-        FOREIGN KEY (repo_id)  REFERENCES Repo  (repo_id),
-        FOREIGN KEY (actor_id) REFERENCES Actor (actor_id),
-        FOREIGN KEY (comment_id) REFERENCES Comment (comment_id)
+        repo_id BIGINT NOT NULL,
+        actor_id BIGINT NOT NULL,
+        comment_id BIGINT,
+        PRIMARY KEY (event_id)
+
     )
 """
-
+        #FOREIGN KEY (repo_id)  REFERENCES Repo  (repo_id),
+        #FOREIGN KEY (actor_id) REFERENCES Actor (actor_id),
+        #FOREIGN KEY (comment_id) REFERENCES Comment (comment_id)
 create_table_queries = [
     table_create_repo,table_create_actor,table_create_user,table_create_comment,table_create_event
 ]
 drop_table_queries = [
-    table_drop_repo,table_drop_actor,table_drop_user,table_drop_comment,table_drop_event
+    table_drop_event,table_drop_repo,table_drop_actor,table_drop_comment,table_drop_user
 ]
 
 
@@ -110,7 +110,7 @@ def main():
     )
     cur = conn.cursor()
 
-    #drop_tables(cur, conn)
+    drop_tables(cur, conn)
     create_tables(cur, conn)
 
     conn.close()
