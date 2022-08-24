@@ -18,7 +18,7 @@ table_create_repo = """
 table_create_actor = """
     CREATE TABLE IF NOT EXISTS Actor (
         actor_id BIGINT NOT NULL,
-        login VARCHAR(20) NOT NULL,
+        login VARCHAR(100) NOT NULL,
         display_login VARCHAR(100) NOT NULL,
         gravatar_id VARCHAR(50),
         url VARCHAR(200) NOT NULL,
@@ -40,19 +40,25 @@ table_create_comment = """
         comment_id BIGINT NOT NULL,
         url VARCHAR(200) NOT NULL,
         html_url VARCHAR(200) NOT NULL,
-        issue_url VARCHAR(200) NOT NULL,
-        node_id VARCHAR(30) NOT NULL,
         user_id BIGINT,
-        created_at TIMESTAMP NOT NULL,
-        updated_at TIMESTAMP NOT NULL,
-        author_association VARCHAR(50) NOT NULL,
-        body VARCHAR(200) NOT NULL,
-        performed_via_github_app VARCHAR(50) ,
-        PRIMARY KEY (comment_id)
+        PRIMARY KEY (comment_id),
+        FOREIGN KEY (user_id) REFERENCES UserT (user_id)
         
     )
 """
-#FOREIGN KEY (user_id) REFERENCES UserT (user_id)
+        # comment_id BIGINT NOT NULL,
+        # url VARCHAR(200) NOT NULL,
+        # html_url VARCHAR(200) NOT NULL,
+        # issue_url VARCHAR(200) NOT NULL,
+        # node_id VARCHAR(30) NOT NULL,
+        # user_id BIGINT,
+        # created_at TIMESTAMP NOT NULL,
+        # updated_at TIMESTAMP NOT NULL,
+        # author_association VARCHAR(50) NOT NULL,
+        # body VARCHAR(200) NOT NULL,
+        # performed_via_github_app VARCHAR(50) ,
+        # PRIMARY KEY (comment_id),
+        # FOREIGN KEY (user_id) REFERENCES UserT (user_id)
 
 table_create_event = """
     CREATE TABLE IF NOT EXISTS Event (
@@ -63,8 +69,10 @@ table_create_event = """
         repo_id BIGINT NOT NULL,
         actor_id BIGINT NOT NULL,
         comment_id BIGINT,
-        PRIMARY KEY (event_id)
-
+        PRIMARY KEY (event_id),
+        FOREIGN KEY (repo_id)  REFERENCES Repo  (repo_id),
+        FOREIGN KEY (actor_id) REFERENCES Actor (actor_id),
+        FOREIGN KEY (comment_id) REFERENCES Comment (comment_id)
     )
 """
         #FOREIGN KEY (repo_id)  REFERENCES Repo  (repo_id),
