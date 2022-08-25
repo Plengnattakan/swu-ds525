@@ -97,8 +97,8 @@ def process(cur, conn, filepath):
                 except: pass
 
                 # Insert data into event tables 
-                try: col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"], each["payload"]["comment"]["id"]
-                except:col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],
+                try: col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],each["payload"]["comment"]["id"],each["payload"]["push_id"]
+                except:col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],each["payload"]["comment"],
                 sql_insert = table_insert_event % str(col_event)
                 #print(sql_insert)
                 cur.execute(sql_insert)

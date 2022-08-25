@@ -69,6 +69,7 @@ table_create_event = """
         repo_id BIGINT NOT NULL,
         actor_id BIGINT NOT NULL,
         comment_id BIGINT,
+        push_id BIGINT,
         PRIMARY KEY (event_id),
         FOREIGN KEY (repo_id)  REFERENCES Repo  (repo_id),
         FOREIGN KEY (actor_id) REFERENCES Actor (actor_id),
