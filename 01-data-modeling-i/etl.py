@@ -1,3 +1,4 @@
+#import Library
 import glob
 import json
 import os
@@ -7,7 +8,7 @@ import psycopg2
 
 
 
-
+#สร้างตัวแปรเก็บ sql สร้างตาราง
 table_insert_repo = """
     INSERT INTO Repo (repo_id,name,url) VALUES %s 
     ON CONFLICT (repo_id) DO NOTHING 
@@ -46,7 +47,7 @@ table_insert_event  = """
 
 
 
-
+#Fuction ดึงข้อมูลจาก .json 
 def get_files(filepath: str) -> List[str]:
     """
     Description: This function is responsible for listing the files in a directory
@@ -73,9 +74,6 @@ def process(cur, conn, filepath):
             data = json.loads(f.read())
             for each in data:
                 # Print some sample data
-                #print(each["id"], each["type"], each["actor"]["login"])
-
-
 
                 # Insert data into repo tables 
                 col_repo = each["repo"]["id"], each["repo"]["name"], each["repo"]["url"]
@@ -84,13 +82,13 @@ def process(cur, conn, filepath):
                 cur.execute(sql_insert)
                 conn.commit()
 
-                # Insert data into Actor tables 
+                # Insert data into Actor table 
                 col_actor = each["actor"]["id"], each["actor"]["login"], each["actor"]["display_login"], each["actor"]["gravatar_id"], each["actor"]["url"], each["actor"]["avatar_url"]
                 sql_insert = table_insert_actor % str(col_actor)
                 cur.execute(sql_insert)
                 conn.commit()
 
-                # Insert data into user tables 
+                # Insert data into usert tables
                 try:
                     col_user = each["payload"]["comment"]["user"]["id"], each["payload"]["comment"]["user"]["login"]
                     sql_insert = table_insert_user % str(col_user)
@@ -98,7 +96,7 @@ def process(cur, conn, filepath):
                     conn.commit()
                 except: pass
             
-                #Insert data into comment tables 
+                #Insert data into comment table
                 try: 
                     col_comment = each["payload"]["comment"]["id"],each["payload"]["comment"]["url"],each["payload"]["comment"]["html_url"], each["payload"]["comment"]["user"]["id"]
                     sql_insert = table_insert_comment % str(col_comment)
@@ -106,7 +104,7 @@ def process(cur, conn, filepath):
                     conn.commit()
                 except: pass
 
-                #Insert data into commits tables 
+                #Insert data into commits table
                 # try:
                 #     col_commit = each["payload"]["commits"]["sha"],each["payload"]["commits"]["message"],each["payload"]["commits"]["url"]
                 #     sql_insert = table_insert_commit % str(col_commit)
@@ -115,7 +113,7 @@ def process(cur, conn, filepath):
                 #     conn.commit()
                 # except: pass
 
-                #Insert data into payload tables 
+                #Insert data into payload table
                 try: 
                     try: col_payload = each["payload"]["push_id"],each["payload"]["size"],each["payload"]["distinct_size"],each["payload"]["ref"],each["payload"]["head"],
                     except: col_payload = each["payload"]["push_id"],each["payload"]["size"],each["payload"]["distinct_size"],each["payload"]["ref"],each["payload"]["head"],each["payload"]["comment"]["id"]
@@ -125,7 +123,7 @@ def process(cur, conn, filepath):
                     conn.commit()
                 except: pass
 
-                # Insert data into event tables 
+                # Insert data into event table 
                 try: col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],each["payload"]["push_id"]
                 except:col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],
                 sql_insert = table_insert_event % str(col_event)
@@ -136,6 +134,7 @@ def process(cur, conn, filepath):
 
 def main():
     conn = psycopg2.connect(
+        #เชื่อมต่อ Postgresql
         "host=127.0.0.1 dbname=postgres user=postgres password=postgres"
     )
     cur = conn.cursor()

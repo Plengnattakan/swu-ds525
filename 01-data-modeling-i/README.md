@@ -1,14 +1,13 @@
 # Data Modeling I
 
-## Getting Started
-
+## Getting Started (เรียกใช้ virtual environment)
 ```sh
 python -m venv ENV
 source ENV/bin/activate
 pip install -r requirements.txt
 ```
 
-### Prerequisite when install psycopg2 package
+### Prerequisite when install psycopg2 package (ติดตั้ง psycopg2)
 
 For Debian/Ubuntu users:
 

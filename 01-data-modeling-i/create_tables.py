@@ -1,5 +1,7 @@
+#import Library
 import psycopg2
 
+#Drop table ใช้สำหรับล้าง Table เพื่อรันในครั้งต่อไป
 table_drop_repo = "DROP TABLE IF EXISTS Repo"
 table_drop_actor = "DROP TABLE IF EXISTS Actor"
 table_drop_user = "DROP TABLE IF EXISTS UserT"
@@ -7,6 +9,9 @@ table_drop_comment = "DROP TABLE IF EXISTS Comment"
 table_drop_payload = "DROP TABLE IF EXISTS Payload"
 table_drop_event = "DROP TABLE IF EXISTS Event"
 
+
+
+#สร้างตัวแปรเก็บ sql สร้างตาราง
 table_create_repo = """
     CREATE TABLE IF NOT EXISTS Repo (
         repo_id BIGINT NOT NULL,
@@ -84,7 +89,7 @@ table_create_event = """
         FOREIGN KEY (push_id) REFERENCES Payload (push_id)
     )
 """
-
+#กำหนดตัวแปรที่ต้องการดำเนินการ Create และ Drop
 create_table_queries = [
     table_create_repo,table_create_actor,table_create_user,table_create_comment,table_create_payload,table_create_event
 ]
@@ -120,6 +125,7 @@ def main():
     - Creates all tables needed.
     - Finally, closes the connection.
     """
+    #เชื่อมต่อ postgresql
     conn = psycopg2.connect(
         "host=127.0.0.1 dbname=postgres user=postgres password=postgres"
     )
