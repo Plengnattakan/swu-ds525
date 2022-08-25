@@ -4,7 +4,6 @@ table_drop_repo = "DROP TABLE IF EXISTS Repo"
 table_drop_actor = "DROP TABLE IF EXISTS Actor"
 table_drop_user = "DROP TABLE IF EXISTS UserT"
 table_drop_comment = "DROP TABLE IF EXISTS Comment"
-
 table_drop_payload = "DROP TABLE IF EXISTS Payload"
 table_drop_event = "DROP TABLE IF EXISTS Event"
 
