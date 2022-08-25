@@ -4,7 +4,7 @@ table_drop_repo = "DROP TABLE IF EXISTS Repo"
 table_drop_actor = "DROP TABLE IF EXISTS Actor"
 table_drop_user = "DROP TABLE IF EXISTS UserT"
 table_drop_comment = "DROP TABLE IF EXISTS Comment"
-table_drop_commit = "DROP TABLE IF EXISTS Commits"
+
 table_drop_payload = "DROP TABLE IF EXISTS Payload"
 table_drop_event = "DROP TABLE IF EXISTS Event"
 
@@ -48,14 +48,14 @@ table_create_comment = """
     )
 """
 
-table_create_commit = """
-    CREATE TABLE IF NOT EXISTS Commits (
-        commit_sha VARCHAR(300) NOT NULL,
-        message VARCHAR(200) ,
-        url VARCHAR(500) ,
-        PRIMARY KEY (commit_sha)
-    )
-"""
+# table_create_commit = """
+#     CREATE TABLE IF NOT EXISTS Commits (
+#         commit_sha VARCHAR(300) NOT NULL,
+#         message VARCHAR(200) ,
+#         url VARCHAR(500) ,
+#         PRIMARY KEY (commit_sha)
+#     )
+# """
 
 table_create_payload = """
     CREATE TABLE IF NOT EXISTS Payload (
@@ -87,10 +87,10 @@ table_create_event = """
 """
 
 create_table_queries = [
-    table_create_repo,table_create_actor,table_create_user,table_create_comment,table_create_commit,table_create_payload,table_create_event
+    table_create_repo,table_create_actor,table_create_user,table_create_comment,table_create_payload,table_create_event
 ]
 drop_table_queries = [
-    table_drop_event,table_drop_payload,table_drop_repo,table_drop_actor,table_drop_comment,table_drop_commit,table_drop_user
+    table_drop_event,table_drop_payload,table_drop_repo,table_drop_actor,table_drop_comment,table_drop_user
 ]
 
 
