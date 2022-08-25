@@ -29,6 +29,16 @@ table_insert_comment = """
     INSERT INTO Comment VALUES %s 
     ON CONFLICT (comment_id) DO NOTHING
 """
+# table_insert_commit = """
+#     INSERT INTO Commits VALUES %s 
+#     ON CONFLICT (commit_sha) DO NOTHING
+# """
+
+table_insert_payload  = """
+    INSERT INTO Payload VALUES %s 
+    ON CONFLICT (push_id) DO NOTHING
+"""
+
 table_insert_event  = """
     INSERT INTO Event VALUES %s 
     ON CONFLICT (event_id) DO NOTHING
@@ -96,9 +106,28 @@ def process(cur, conn, filepath):
                     conn.commit()
                 except: pass
 
+                #Insert data into commits tables 
+                # try:
+                #     col_commit = each["payload"]["commits"]["sha"],each["payload"]["commits"]["message"],each["payload"]["commits"]["url"]
+                #     sql_insert = table_insert_commit % str(col_commit)
+                #     print(sql_insert)
+                #     cur.execute(sql_insert)
+                #     conn.commit()
+                # except: pass
+
+                #Insert data into payload tables 
+                try: 
+                    try: col_payload = each["payload"]["push_id"],each["payload"]["size"],each["payload"]["distinct_size"],each["payload"]["ref"],each["payload"]["head"],
+                    except: col_payload = each["payload"]["push_id"],each["payload"]["size"],each["payload"]["distinct_size"],each["payload"]["ref"],each["payload"]["head"],each["payload"]["comment"]["id"]
+                    sql_insert = table_insert_payload % str(col_payload)
+                    #print(sql_insert)
+                    cur.execute(sql_insert)
+                    conn.commit()
+                except: pass
+
                 # Insert data into event tables 
-                try: col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],each["payload"]["comment"]["id"],each["payload"]["push_id"]
-                except:col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],each["payload"]["comment"],
+                try: col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],each["payload"]["push_id"]
+                except:col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],
                 sql_insert = table_insert_event % str(col_event)
                 #print(sql_insert)
                 cur.execute(sql_insert)
