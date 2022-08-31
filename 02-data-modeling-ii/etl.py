@@ -172,19 +172,19 @@ def main():
 
     # Select data in Cassandra and print them to stdout
     query1 = """
-    SELECT * from Repo 
+    SELECT count(id) from Repo 
      """
     query2 = """
     SELECT id,type,create_at,repo_id,repo_name,actor_id,login from Event --WHERE public='True' ORDER BY created_at DESC
      """
     query3 = """
-    SELECT * from Event WHERE id=23488007821
+    SELECT * from Event WHERE id=23488007821 
      """
     query4 = """
-    SELECT * from Actor WHERE id=104744021
+    SELECT count(id) from Actor 
      """
     try:
-        rows = session.execute(query4)
+        rows = session.execute(query1)
     except Exception as e:
         print(e)
 
