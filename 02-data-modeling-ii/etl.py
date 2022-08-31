@@ -26,15 +26,11 @@ table_create_actor = """
     CREATE TABLE IF NOT EXISTS Actor (
         id bigint,
         login varchar,
-        avatar_url varchar,
+        display_login varchar,
         gravatar_id varchar,
         url varchar,
-        followers_url varchar,
-        following_url varchar,
-        starred_url varchar,
-        subscriptions_url varchar,
-        organizations_url varchar,
-        PRIMARY KEY ((id), login)
+        avartar_url varchar,
+        PRIMARY KEY ((id),login)
     )
 """
 
@@ -47,8 +43,8 @@ table_create_event = """
         repo_id bigint,
         repo_name varchar,
         actor_id bigint,
-        actor_name varchar,
-        commit_sha varchar,
+        login varchar,
+        push_id bigint,
         PRIMARY KEY ((id),create_at)
         )
 """
@@ -58,13 +54,6 @@ create_table_queries = [
 drop_table_queries = [
     table_drop_repo,table_drop_actor,table_drop_event
 ]
-
-
-
-
-
-
-
 
 #Fuction ดึงข้อมูลจาก .json 
 def get_files(filepath: str) -> List[str]:
@@ -111,30 +100,41 @@ def process(session, filepath):
             data = json.loads(f.read())
             for each in data:
                 # Print some sample data
-                print(each["id"], each["type"], each["actor"]["login"])
+                #print(each["actor"]["avartar_url"])
 
                 # Insert data into repo tables 
-
-                query_repo = "INSERT INTO Repo (id,name,url) VALUES (%s, '%s', %s)" \
-                        % (each["repo"]["id"], each["repo"]["name"], each["repo"]["url"])
+                query_repo = "INSERT INTO Repo (id,name,url) VALUES (%s, '%s', '%s')" \
+                         % (each["repo"]["id"], each["repo"]["name"], each["repo"]["url"])
                 session.execute(query_repo)
-
+        
                  # Insert data into Actor table 
-                query_actor = "INSERT INTO Actor (id,login,avatar_url,gravatar_id,url,followers_url,following_url,starred_url,subscriptions_url,organizations_url) \
-                        VALUES (%s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s', '%s')" \
-                        % (each['payload']['issue']["user"]["id"], each['payload']['issue']["user"]["login"], each['payload']['issue']["user"]["avatar_url"], eacheach['payload']['issue']["user"]["gravatar_id"], each['payload']['issue']["user"]["url"], each['payload']['issue']["user"]["followers_url"],each['payload']['issue']["user"]["following_url"],each['payload']['issue']["user"]["starred_url"],each['payload']['issue']["user"]["subscriptions_url"],each['payload']['issue']["user"]["organizations_url"])
-                session.execute(query_actor)
+                
+                try:
+                    query_actor = "INSERT INTO Actor (id,login,display_login,gravatar_id,url,avartar_url) \
+                        VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s')" \
+                        % (each["actor"]["id"], each["actor"]["login"], each["actor"]["display_login"], each["actor"]["gravatar_id"], each["actor"]["url"],each["actor"]["avartar_url"])
+                    session.execute(query_actor)
+                except:
+                    query_actor = "INSERT INTO Actor (id,login,display_login,gravatar_id,url) \
+                        VALUES (%s, '%s', '%s', '%s', '%s')" \
+                        % (each["actor"]["id"], each["actor"]["login"], each["actor"]["display_login"], each["actor"]["gravatar_id"], each["actor"]["url"])
+                    session.execute(query_actor)    
 
                 try:
-                    query_event = "INSERT INTO Actor (id,type,public,create_at,repo_id,repo_name,actor_id,actor_name,commit_sha) \
-                        VALUES (%s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s')" \
-                        % (each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["name"],  each["payload"]["commit"]["sha"])
-                    session.execute(query_event)
+                    if each["payload"]["push_id"] != None :
+                        query_event = "INSERT INTO Event (id,type,public,create_at,repo_id,repo_name,actor_id,login,push_id) \
+                            VALUES (%s, '%s', '%s', '%s', %s, '%s',%s, '%s', %s)" \
+                            % (each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["login"],  each["payload"]["push_id"])
+                        session.execute(query_event)
+                        
+                    else :
+                        query_event = "INSERT INTO Event (id,type,public,create_at,repo_id,repo_name,actor_id,login) \
+                            VALUES (%s, '%s', '%s', '%s', %s, '%s',%s, '%s')" \
+                            % (each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["login"])
+                        session.execute(query_event)
+                        
                 except:
-                    query_event = "INSERT INTO Actor (id,type,public,create_at,repo_id,repo_name,actor_id,actor_name) \
-                        VALUES (%s, '%s', %s, '%s', %s, '%s', '%s', %s)" \
-                        % (each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["name"])
-                    session.execute(query_event)
+                    pass
 
 
 # def insert_sample_data(session):
@@ -171,11 +171,14 @@ def main():
     #insert_sample_data(session)
 
     # Select data in Cassandra and print them to stdout
-    query = """
+    query1 = """
     SELECT * from Repo 
      """
+    query2 = """
+    SELECT id,type,create_at,repo_id,repo_name,actor_id,login from Event WHERE public='True' ORDER BY created_at DESC
+     """
     try:
-        rows = session.execute(query)
+        rows = session.execute(query2)
     except Exception as e:
         print(e)
 
