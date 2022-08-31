@@ -1,27 +1,82 @@
 from cassandra.cluster import Cluster
+import glob
+import json
+import os
+from typing import List
+
+import psycopg2
 
 
-table_drop = "DROP TABLE events"
+#Drop table ใช้สำหรับล้าง Table เพื่อรันในครั้งต่อไป
+table_drop_repo = "DROP TABLE IF EXISTS Repo"
+table_drop_actor = "DROP TABLE IF EXISTS Actor"
+table_drop_event = "DROP TABLE IF EXISTS Event"
 
-table_create = """
-    CREATE TABLE IF NOT EXISTS events
-    (
-        id text,
-        type text,
-        public boolean,
-        PRIMARY KEY (
-            id,
-            type
-        )
+#สร้างตัวแปรเก็บ sql สร้างตาราง
+table_create_repo = """
+    CREATE TABLE IF NOT EXISTS Repo (
+        id BIGINT,
+        name VARCHAR(100),
+        url VARCHAR(200),
+        PRIMARY KEY ((id), name)
     )
 """
 
+table_create_actor = """
+    CREATE TABLE IF NOT EXISTS Actor (
+        id BIGINT,
+        login VARCHAR(100),
+        avatar_url VARCHAR(200),
+        gravatar_id VARCHAR(50),
+        url VARCHAR(200),
+        followers_url VARCHAR(200),
+        following_url VARCHAR(200),
+        starred_url VARCHAR(200),
+        subscriptions_url VARCHAR(200),
+        organizations_url VARCHAR(200),
+        PRIMARY KEY ((id), login)
+    )
+"""
+
+table_create_event = """
+    CREATE TABLE IF NOT EXISTS Event (
+        id BIGINT,
+        type VARCHAR(50) ,
+        public VARCHAR(10) ,
+        create_at TIMESTAMP,
+        repo_id BIGINT ,
+        repo_name VARCHAR(100) ,
+        actor_id BIGINT ,
+        actor_name VARCHAR(100),
+        commit_sha VARCHAR(100),
+        PRIMARY KEY (id),create_at)
+"""
 create_table_queries = [
-    table_create,
+    table_create_repo,table_create_actor,table_create_event
 ]
 drop_table_queries = [
-    table_drop,
+    table_drop_repo,table_drop_actor,table_drop_event
 ]
+
+#Fuction ดึงข้อมูลจาก .json 
+def get_files(filepath: str) -> List[str]:
+    """
+    Description: This function is responsible for listing the files in a directory
+    """
+
+    all_files = []
+    for root, dirs, files in os.walk(filepath):
+        files = glob.glob(os.path.join(root, "*.json"))
+        for f in files:
+            all_files.append(os.path.abspath(f))
+
+    num_files = len(all_files)
+    print(f"{num_files} files found in {filepath}")
+
+    return all_files
+
+
+
 
 def drop_tables(session):
     for query in drop_table_queries:
