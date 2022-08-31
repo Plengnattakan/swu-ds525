@@ -62,12 +62,7 @@ drop_table_queries = [
 
 
 
-table_insert_event = """
-    INSERT INTO Event (
-        id,type,public,create_at,repo_id,repo_name,actor_id,actor_name,commit_sha
-    ) VALUES %s 
-    
-"""
+
 
 
 
@@ -130,12 +125,17 @@ def process(session, filepath):
                         % (each['payload']['issue']["user"]["id"], each['payload']['issue']["user"]["login"], each['payload']['issue']["user"]["avatar_url"], eacheach['payload']['issue']["user"]["gravatar_id"], each['payload']['issue']["user"]["url"], each['payload']['issue']["user"]["followers_url"],each['payload']['issue']["user"]["following_url"],each['payload']['issue']["user"]["starred_url"],each['payload']['issue']["user"]["subscriptions_url"],each['payload']['issue']["user"]["organizations_url"])
                 session.execute(query_actor)
 
-                # try: col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["name"],  each["payload"]["commit"]["sha"]
-                # except:col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["name"],
-                # sql_insert = table_insert_event % str(col_event)
-                # #print(sql_insert)
-                # cur.execute(sql_insert)
-                # conn.commit()
+                try:
+                    query_event = "INSERT INTO Actor (id,type,public,create_at,repo_id,repo_name,actor_id,actor_name,commit_sha) \
+                        VALUES (%s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s')" \
+                        % (each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["name"],  each["payload"]["commit"]["sha"])
+                    session.execute(query_event)
+                except:
+                    query_event = "INSERT INTO Actor (id,type,public,create_at,repo_id,repo_name,actor_id,actor_name) \
+                        VALUES (%s, '%s', %s, '%s', %s, '%s', '%s', %s)" \
+                        % (each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["name"])
+                    session.execute(query_event)
+
 
 # def insert_sample_data(session):
 #     query = f"""
@@ -172,7 +172,7 @@ def main():
 
     # Select data in Cassandra and print them to stdout
     query = """
-    SELECT * from repo 
+    SELECT * from Repo 
      """
     try:
         rows = session.execute(query)
