@@ -15,41 +15,42 @@ table_drop_event = "DROP TABLE IF EXISTS Event"
 #สร้างตัวแปรเก็บ sql สร้างตาราง
 table_create_repo = """
     CREATE TABLE IF NOT EXISTS Repo (
-        id BIGINT,
-        name VARCHAR(100),
-        url VARCHAR(200),
+        id  bigint,
+        name varchar,
+        url varchar,
         PRIMARY KEY ((id), name)
-    )
+        )
 """
 
 table_create_actor = """
     CREATE TABLE IF NOT EXISTS Actor (
-        id BIGINT,
-        login VARCHAR(100),
-        avatar_url VARCHAR(200),
-        gravatar_id VARCHAR(50),
-        url VARCHAR(200),
-        followers_url VARCHAR(200),
-        following_url VARCHAR(200),
-        starred_url VARCHAR(200),
-        subscriptions_url VARCHAR(200),
-        organizations_url VARCHAR(200),
+        id bigint,
+        login varchar,
+        avatar_url varchar,
+        gravatar_id varchar,
+        url varchar,
+        followers_url varchar,
+        following_url varchar,
+        starred_url varchar,
+        subscriptions_url varchar,
+        organizations_url varchar,
         PRIMARY KEY ((id), login)
     )
 """
 
 table_create_event = """
     CREATE TABLE IF NOT EXISTS Event (
-        id BIGINT,
-        type VARCHAR(50) ,
-        public VARCHAR(10) ,
-        create_at TIMESTAMP,
-        repo_id BIGINT ,
-        repo_name VARCHAR(100) ,
-        actor_id BIGINT ,
-        actor_name VARCHAR(100),
-        commit_sha VARCHAR(100),
-        PRIMARY KEY (id),create_at)
+        id bigint,
+        type varchar ,
+        public varchar,
+        create_at timestamp,
+        repo_id bigint,
+        repo_name varchar,
+        actor_id bigint,
+        actor_name varchar,
+        commit_sha varchar,
+        PRIMARY KEY ((id),create_at)
+        )
 """
 create_table_queries = [
     table_create_repo,table_create_actor,table_create_event
@@ -57,6 +58,18 @@ create_table_queries = [
 drop_table_queries = [
     table_drop_repo,table_drop_actor,table_drop_event
 ]
+
+
+
+
+table_insert_event = """
+    INSERT INTO Event (
+        id,type,public,create_at,repo_id,repo_name,actor_id,actor_name,commit_sha
+    ) VALUES %s 
+    
+"""
+
+
 
 #Fuction ดึงข้อมูลจาก .json 
 def get_files(filepath: str) -> List[str]:
@@ -105,14 +118,30 @@ def process(session, filepath):
                 # Print some sample data
                 print(each["id"], each["type"], each["actor"]["login"])
 
-                # Insert data into tables here
+                # Insert data into repo tables 
 
+                query_repo = "INSERT INTO Repo (id,name,url) VALUES (%s, '%s', %s)" \
+                        % (each["repo"]["id"], each["repo"]["name"], each["repo"]["url"])
+                session.execute(query_repo)
 
-def insert_sample_data(session):
-    query = f"""
-    INSERT INTO events (id, type, public) VALUES ('23487929637', 'IssueCommentEvent', true)
-    """
-    session.execute(query)
+                 # Insert data into Actor table 
+                query_actor = "INSERT INTO Actor (id,login,avatar_url,gravatar_id,url,followers_url,following_url,starred_url,subscriptions_url,organizations_url) \
+                        VALUES (%s, '%s', %s, '%s', %s, '%s', '%s', %s, '%s', '%s')" \
+                        % (each['payload']['issue']["user"]["id"], each['payload']['issue']["user"]["login"], each['payload']['issue']["user"]["avatar_url"], eacheach['payload']['issue']["user"]["gravatar_id"], each['payload']['issue']["user"]["url"], each['payload']['issue']["user"]["followers_url"],each['payload']['issue']["user"]["following_url"],each['payload']['issue']["user"]["starred_url"],each['payload']['issue']["user"]["subscriptions_url"],each['payload']['issue']["user"]["organizations_url"])
+                session.execute(query_actor)
+
+                # try: col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["name"],  each["payload"]["commit"]["sha"]
+                # except:col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"],each["repo"]["name"],  each["actor"]["id"],  each["actor"]["name"],
+                # sql_insert = table_insert_event % str(col_event)
+                # #print(sql_insert)
+                # cur.execute(sql_insert)
+                # conn.commit()
+
+# def insert_sample_data(session):
+#     query = f"""
+#     INSERT INTO events (id, type, public) VALUES ('23487929637', 'IssueCommentEvent', true)
+#     """
+#     session.execute(query)
 
 
 def main():
@@ -138,14 +167,13 @@ def main():
 
     drop_tables(session)
     create_tables(session)
-
-    # process(session, filepath="../data")
-    insert_sample_data(session)
+    process(session, filepath="../data")
+    #insert_sample_data(session)
 
     # Select data in Cassandra and print them to stdout
     query = """
-    SELECT * from events WHERE id = '23487929637' AND type = 'IssueCommentEvent'
-    """
+    SELECT * from repo 
+     """
     try:
         rows = session.execute(query)
     except Exception as e:
