@@ -175,10 +175,16 @@ def main():
     SELECT * from Repo 
      """
     query2 = """
-    SELECT id,type,create_at,repo_id,repo_name,actor_id,login from Event WHERE public='True' ORDER BY created_at DESC
+    SELECT id,type,create_at,repo_id,repo_name,actor_id,login from Event --WHERE public='True' ORDER BY created_at DESC
+     """
+    query3 = """
+    SELECT * from Event WHERE id=23488007821
+     """
+    query4 = """
+    SELECT * from Actor WHERE id=104744021
      """
     try:
-        rows = session.execute(query2)
+        rows = session.execute(query4)
     except Exception as e:
         print(e)
 
