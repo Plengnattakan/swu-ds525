@@ -184,7 +184,7 @@ def main():
     SELECT count(id) from Actor 
      """
     try:
-        rows = session.execute(query1)
+        rows = session.execute(query2)
     except Exception as e:
         print(e)
 
