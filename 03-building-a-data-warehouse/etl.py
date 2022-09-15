@@ -18,17 +18,17 @@ create_table_queries = [
         id varchar,
         type varchar,
         actor_id bigint,
-        actor_name varchar,
+        actor_login varchar,
         actor_url varchar,
         repo_id bigint,
         repo_name varchar,
         repo_url varchar,
         public varchar,
         created_at varchar,
-        actor_login varchar,
         actor_display_login varchar,
         actor_gravatar_id varchar,
         actor_url varchar,
+        push_id varchar,
     )
     """,
     """
@@ -40,7 +40,7 @@ create_table_queries = [
         repo_id bigint,
         repo_name varchar,
         actor_id bigint,
-        login varchar,
+        actor_login varchar,
         push_id bigint
 
         )
@@ -81,14 +81,14 @@ insert_table_queries = [
     WHERE id NOT IN (SELECT DISTINCT id FROM Repo)
     """,
     """
-    INSERT INTO Actor (id,login,display_login,gravatar_id,url)
+    INSERT INTO Actor (id,login,display_login,gravatar_id,actor_url)
     SELECT DISTINCT actor_id,actor_login, actor_display_login,actor_gravatar_id, actor_url
     FROM staging_events
     WHERE actor_id NOT IN (SELECT DISTINCT id FROM Actor)
     """,
     """
-    INSERT INTO Event (id,type,public,create_at,repo_id,repo_name,actor_id,login)
-    SELECT DISTINCT id, type, public,created_at,repo_id,repo_name,actor_id,login
+    INSERT INTO Event (id,type,public,create_at,repo_id,repo_name,actor_id,actor_login,push_id)
+    SELECT DISTINCT id, type, public,created_at,repo_id,repo_name,actor_id,actor_login,push_id
     FROM staging_events
     WHERE id NOT IN (SELECT DISTINCT id FROM Event)
     """,
@@ -119,7 +119,7 @@ def insert_tables(cur, conn):
 
 
 def main():
-    host = "redshift-cluster-2.ci0boaeqvdep.us-east-1.redshift.amazonaws.com:"
+    host = "redshift-cluster-1.ci0boaeqvdep.us-east-1.redshift.amazonaws.com"
     dbname = "dev"
     user = "awsuser"
     password = "Pleng056720990"
