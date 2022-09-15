@@ -69,11 +69,11 @@ def insert_tables(cur, conn):
 
 
 def main():
-    host = ""
-    dbname = ""
-    user = ""
-    password = ""
-    port = ""
+    host = "redshift-cluster-1.ci0boaeqvdep.us-east-1.redshift.amazonaws.com:5439/dev"
+    dbname = "5439"
+    user = "dev"
+    password = "awsuser"
+    port = "Pleng056720990"
     conn_str = f"host={host} dbname={dbname} user={user} password={password} port={port}"
     conn = psycopg2.connect(conn_str)
     cur = conn.cursor()
