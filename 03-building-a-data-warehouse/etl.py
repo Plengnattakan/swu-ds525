@@ -51,8 +51,7 @@ create_table_queries = [
         login varchar,
         display_login varchar,
         gravatar_id varchar,
-        url varchar,
-        avartar_url varchar
+        url varchar
     )
     """,
     """
