@@ -1,9 +1,5 @@
 import psycopg2
-from cassandra.cluster import Cluster
-import glob
-import json
-import os
-from typing import List
+
 
 
 #Drop table ใช้สำหรับล้าง Table เพื่อรันในครั้งต่อไป
@@ -125,11 +121,11 @@ def insert_tables(cur, conn):
 
 
 def main():
-    host = "redshift-cluster-1.ci0boaeqvdep.us-east-1.redshift.amazonaws.com:5439/dev"
-    dbname = "5439"
-    user = "dev"
-    password = "awsuser"
-    port = "Pleng056720990"
+    host = "redshift-cluster-1.ci0boaeqvdep.us-east-1.redshift.amazonaws.com"
+    dbname = "dev"
+    user = "awsuser"
+    password = "Pleng056720990"
+    port = "5439"
     conn_str = f"host={host} dbname={dbname} user={user} password={password} port={port}"
     conn = psycopg2.connect(conn_str)
     cur = conn.cursor()
