@@ -1,7 +1,5 @@
 import psycopg2
 
-
-
 #Drop table ใช้สำหรับล้าง Table เพื่อรันในครั้งต่อไป
 drop_table_queries = [
     "DROP TABLE IF EXISTS staging_events",
@@ -121,7 +119,7 @@ def insert_tables(cur, conn):
 
 
 def main():
-    host = "redshift-cluster-1.ci0boaeqvdep.us-east-1.redshift.amazonaws.com"
+    host = "redshift-cluster-2.ci0boaeqvdep.us-east-1.redshift.amazonaws.com:"
     dbname = "dev"
     user = "awsuser"
     password = "Pleng056720990"
