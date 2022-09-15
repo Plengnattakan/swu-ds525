@@ -1,48 +1,104 @@
 import psycopg2
+from cassandra.cluster import Cluster
+import glob
+import json
+import os
+from typing import List
 
 
+#Drop table ใช้สำหรับล้าง Table เพื่อรันในครั้งต่อไป
 drop_table_queries = [
-    "DROP TABLE IF EXISTS events",
+    "DROP TABLE IF EXISTS staging_events",
+    "DROP TABLE IF EXISTS Repo",
+    "DROP TABLE IF EXISTS Actor",
+    "DROP TABLE IF EXISTS Event",
 ]
+
+
+
+#สร้างตัวแปรเก็บ sql สร้างตาราง
+
 create_table_queries = [
     """
     CREATE TABLE IF NOT EXISTS staging_events (
-        id text,
-        type text,
-        actor text,
-        repo text,
-        created_at text
+        id varchar,
+        type varchar,
+        actor_id bigint,
+        actor_name varchar,
+        actor_url varchar,
+        repo_id bigint,
+        repo_name varchar,
+        repo_url varchar,
+        public varchar,
+        created_at varchar,
+        actor_login varchar,
+        actor_display_login varchar,
+        actor_gravatar_id varchar,
+        actor_url varchar,
     )
     """,
     """
-    CREATE TABLE IF NOT EXISTS events (
-        id int
+    CREATE TABLE IF NOT EXISTS Event (
+        id bigint,
+        type varchar ,
+        public varchar,
+        create_at timestamp,
+        repo_id bigint,
+        repo_name varchar,
+        actor_id bigint,
+        login varchar,
+        push_id bigint
+
+        )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS Actor (
+        id bigint,
+        login varchar,
+        display_login varchar,
+        gravatar_id varchar,
+        url varchar,
+        avartar_url varchar
     )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS Repo (
+        id  bigint,
+        name varchar,
+        url varchar
+        )
     """,
 ]
+
+
 copy_table_queries = [
     """
-    COPY staging_events FROM 's3://zkan-swu-labs/github_events_01.json'
-    CREDENTIALS 'aws_iam_role=arn:aws:iam::377290081649:role/LabRole'
-    JSON 's3://zkan-swu-labs/events_json_path.json'
+    COPY staging_events FROM 's3://pleng/github_events_01.json'
+    CREDENTIALS 'aws_iam_role=arn:aws:iam::283010062450:role/LabRole'
+    JSON 's3://pleng/events_json_path.json'
     REGION 'us-east-1'
     """,
 ]
 insert_table_queries = [
+"""
+    INSERT INTO Repo (id,name,url) 
+    SELECT DISTINCT repo_id, repo_name, repo_url
+    FROM staging_events
+    WHERE id NOT IN (SELECT DISTINCT id FROM Repo)
+    """,
     """
-    INSERT INTO
-      events (
-        id
-      )
-    SELECT
-      DISTINCT id,
-    FROM
-      staging_events
-    WHERE
-      id NOT IN (SELECT DISTINCT id FROM events)
+    INSERT INTO Actor (id,login,display_login,gravatar_id,url)
+    SELECT DISTINCT actor_id,actor_login, actor_display_login,actor_gravatar_id, actor_url
+    FROM staging_events
+    WHERE actor_id NOT IN (SELECT DISTINCT id FROM Actor)
+    """,
+    """
+    INSERT INTO Event (id,type,public,create_at,repo_id,repo_name,actor_id,login)
+    SELECT DISTINCT id, type, public,created_at,repo_id,repo_name,actor_id,login
+    FROM staging_events
+    WHERE id NOT IN (SELECT DISTINCT id FROM Event)
     """,
 ]
-
 
 def drop_tables(cur, conn):
     for query in drop_table_queries:
@@ -78,11 +134,18 @@ def main():
     conn = psycopg2.connect(conn_str)
     cur = conn.cursor()
 
-    # drop_tables(cur, conn)
-    # create_tables(cur, conn)
-    # load_tables(cur, conn)
-    # insert_tables(cur, conn)
+    drop_tables(cur, conn)
+    create_tables(cur, conn)
+    load_staging_tables(cur, conn)
+    insert_tables(cur, conn)
 
+    # query data
+    query = "select * from event"
+    cur.execute(query)
+    # print data
+    records = cur.fetchall()
+    for row in records:
+        print(row)
     conn.close()
 
 
