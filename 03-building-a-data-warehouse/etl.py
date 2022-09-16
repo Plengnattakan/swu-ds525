@@ -23,7 +23,7 @@ create_table_queries = [
         repo_id bigint,
         repo_name text,
         repo_url text,
-        public text,
+        public boolean,
         created_at text,
         actor_display_login text,
         actor_gravatar_id text,
@@ -32,15 +32,15 @@ create_table_queries = [
     """,
     """
     CREATE TABLE IF NOT EXISTS Event (
-        id bigint,
+        id text,
         type text ,
-        public text,
+        public boolean,
         create_at text,
         repo_id bigint,
         repo_name text,
         actor_id bigint,
         actor_login text,
-        push_id bigint
+        push_id text
 
         )
     """,
