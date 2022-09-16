@@ -15,32 +15,31 @@ drop_table_queries = [
 create_table_queries = [
     """
     CREATE TABLE IF NOT EXISTS staging_events (
-        id varchar,
-        type varchar,
+        id text,
+        type text,
         actor_id bigint,
-        actor_login varchar,
-        actor_url varchar,
+        actor_login text,
+        actor_url text,
         repo_id bigint,
-        repo_name varchar,
-        repo_url varchar,
-        public varchar,
-        created_at varchar,
-        actor_display_login varchar,
-        actor_gravatar_id varchar,
-        actor_url varchar,
-        push_id varchar,
+        repo_name text,
+        repo_url text,
+        public text,
+        created_at text,
+        actor_display_login text,
+        actor_gravatar_id text,
+        push_id text
     )
     """,
     """
     CREATE TABLE IF NOT EXISTS Event (
         id bigint,
-        type varchar ,
-        public varchar,
-        create_at timestamp,
+        type text ,
+        public text,
+        create_at text,
         repo_id bigint,
-        repo_name varchar,
+        repo_name text,
         actor_id bigint,
-        actor_login varchar,
+        actor_login text,
         push_id bigint
 
         )
@@ -48,10 +47,10 @@ create_table_queries = [
     """
     CREATE TABLE IF NOT EXISTS Actor (
         id bigint,
-        login varchar,
-        display_login varchar,
-        gravatar_id varchar,
-        url varchar
+        login text,
+        display_login text,
+        gravatar_id text,
+        url text
     )
     """,
     """
@@ -80,7 +79,7 @@ insert_table_queries = [
     WHERE id NOT IN (SELECT DISTINCT id FROM Repo)
     """,
     """
-    INSERT INTO Actor (id,login,display_login,gravatar_id,actor_url)
+    INSERT INTO Actor (id,login,display_login,gravatar_id,url)
     SELECT DISTINCT actor_id,actor_login, actor_display_login,actor_gravatar_id, actor_url
     FROM staging_events
     WHERE actor_id NOT IN (SELECT DISTINCT id FROM Actor)

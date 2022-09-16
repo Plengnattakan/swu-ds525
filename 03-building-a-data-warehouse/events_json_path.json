@@ -12,7 +12,6 @@
     "$.created_at",
     "$.actor.display_login",
     "$.actor.gravatar_id",
-    "$.actor.url",
-    "$.payload.push_id,"
+    "$.payload.push_id"
   ]
 }
