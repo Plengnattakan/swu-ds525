@@ -1,5 +1,6 @@
 # Building a Data Lake
-## 1. ออกแบบ Data Modeling ตามที่ต้องการ
+## 1. ออกแบบ Data Model ตามที่ต้องการ
+![DataModel](S__2695189.jpg)
 ## 2. ทำการ เข้าไปที่ Folder 04 ด้วยคำสั่ง 
 ```sh
 cd 04-building-a-data-lake 
