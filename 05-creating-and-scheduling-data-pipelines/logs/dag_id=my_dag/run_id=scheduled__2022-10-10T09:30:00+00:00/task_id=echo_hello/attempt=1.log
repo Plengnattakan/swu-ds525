@@ -256,3 +256,4 @@ AIRFLOW_CTX_DAG_RUN_ID=scheduled__2022-10-10T09:30:00+00:00
 [2022-10-12T07:33:50.289+0000] {subprocess.py:97} INFO - Command exited with return code 0
 [2022-10-12T07:33:50.701+0000] {taskinstance.py:1406} INFO - Marking task as SUCCESS. dag_id=my_dag, task_id=echo_hello, execution_date=20221010T093000, start_date=20221012T073345, end_date=20221012T073350
 [2022-10-12T07:33:51.090+0000] {local_task_job.py:164} INFO - Task exited with return code 0
+[2022-10-12T07:33:53.495+0000] {local_task_job.py:273} INFO - 0 downstream tasks scheduled from follow-on schedule check
