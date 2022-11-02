@@ -28,7 +28,7 @@ docker-compose up
 
 ### 4. ทำการตั้งค่าการเชื่อมต่อใน Postgres Port 8088 
 
-![DataModel](/workspace/swu-ds525/05-creating-and-scheduling-data-pipelines/1667409666493.jpg)
+![DataModel](1667409666493.jpg)
 <br>
 
 ### 5. ทำการเชื่อมต่อ Postgres กับ Airflow จากเมนู Admin>Connections และกรอกข้อมูลให้สอดคล้องกับการตั้งค่าใน Postgres
@@ -40,5 +40,5 @@ docker-compose up
 <br>
 
 โดยกราฟขั้นตอนในการรันจะได้ดังนี้
-![DataModel](S__2727976.jpg)
+![DataModel](1667409793367.jpg)
 <br>
