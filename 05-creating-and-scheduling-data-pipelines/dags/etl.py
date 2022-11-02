@@ -123,9 +123,9 @@ def _process(**context):
 
 with DAG(
     "etl",
-    start_date=timezone.datetime(2022, 10, 15),
+    start_date=timezone.datetime(2022, 11, 2),
     schedule="@daily",
-    tags=["workshop"],
+    tags=["Project5"],
     catchup=False,
 ) as dag:
 
