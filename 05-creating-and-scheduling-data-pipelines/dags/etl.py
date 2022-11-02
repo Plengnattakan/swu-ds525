@@ -31,25 +31,86 @@ def _create_tables():
     conn = hook.get_conn()
     cur = conn.cursor()
 
-    table_create_actors = """
-        CREATE TABLE IF NOT EXISTS actors (
-            id int,
-            login text,
-            PRIMARY KEY(id)
+    #สร้างตัวแปรเก็บ sql สร้างตาราง
+    table_create_repo = """
+        CREATE TABLE IF NOT EXISTS Repo (
+            repo_id BIGINT NOT NULL,
+            name VARCHAR(100) NOT NULL,
+            url VARCHAR(200) NOT NULL,
+            PRIMARY KEY (repo_id)
         )
     """
-    table_create_events = """
-        CREATE TABLE IF NOT EXISTS events (
-            id text,
-            type text,
-            actor_id int,
-            PRIMARY KEY(id),
-            CONSTRAINT fk_actor FOREIGN KEY(actor_id) REFERENCES actors(id)
+
+    table_create_actor = """
+        CREATE TABLE IF NOT EXISTS Actor (
+            actor_id BIGINT NOT NULL,
+            login VARCHAR(100) NOT NULL,
+            display_login VARCHAR(100) NOT NULL,
+            gravatar_id VARCHAR(50),
+            url VARCHAR(200) NOT NULL,
+            avartar_url VARCHAR(200) NOT NULL,
+            PRIMARY KEY (actor_id)
+        )
+    """
+
+    table_create_user = """
+        CREATE TABLE IF NOT EXISTS UserT (
+            user_id BIGINT NOT NULL,
+            login VARCHAR(100) NOT NULL,
+            PRIMARY KEY (user_id)
+        )
+    """
+
+    table_create_comment = """
+        CREATE TABLE IF NOT EXISTS Comment (
+            comment_id BIGINT NOT NULL,
+            url VARCHAR(200) NOT NULL,
+            html_url VARCHAR(200) NOT NULL,
+            user_id BIGINT,
+            PRIMARY KEY (comment_id),
+            FOREIGN KEY (user_id) REFERENCES UserT (user_id)
+        )
+    """
+
+    # table_create_commit = """
+    #     CREATE TABLE IF NOT EXISTS Commits (
+    #         commit_sha VARCHAR(300) NOT NULL,
+    #         message VARCHAR(200) ,
+    #         url VARCHAR(500) ,
+    #         PRIMARY KEY (commit_sha)
+    #     )
+    # """
+
+    table_create_payload = """
+        CREATE TABLE IF NOT EXISTS Payload (
+            push_id BIGINT,
+            size INT,
+            distinct_size INT,
+            ref VARCHAR(200),
+            head VARCHAR(200),
+            comment_id BIGINT,
+            PRIMARY KEY (push_id),
+            FOREIGN KEY (comment_id) REFERENCES Comment (comment_id)
+        )
+    """
+
+    table_create_event = """
+        CREATE TABLE IF NOT EXISTS Event (
+            event_id BIGINT NOT NULL,
+            type VARCHAR(50) NOT NULL,
+            public VARCHAR(10) NOT NULL,
+            create_at TIMESTAMP NOT NULL,
+            repo_id BIGINT NOT NULL,
+            actor_id BIGINT NOT NULL,
+            push_id BIGINT,
+            PRIMARY KEY (event_id),
+            FOREIGN KEY (repo_id)  REFERENCES Repo  (repo_id),
+            FOREIGN KEY (actor_id) REFERENCES Actor (actor_id),
+            FOREIGN KEY (push_id) REFERENCES Payload (push_id)
         )
     """
     create_table_queries = [
-        table_create_actors,
-        table_create_events,
+        table_create_repo,table_create_actor,table_create_user,table_create_comment,table_create_payload,table_create_event
     ]
     for query in create_table_queries:
         cur.execute(query)
@@ -63,6 +124,43 @@ def _process(**context):
 
     ti = context["ti"]
 
+    #สร้างตัวแปรเก็บ sql สร้างตาราง
+    table_insert_repo = """
+        INSERT INTO Repo (repo_id,name,url) VALUES %s 
+        ON CONFLICT (repo_id) DO NOTHING 
+    """
+    table_insert_actor = """
+        INSERT INTO Actor (
+            actor_id,login,display_login,gravatar_id,url,avartar_url
+        ) VALUES %s 
+        ON CONFLICT (actor_id) DO NOTHING
+    """
+    table_insert_user = """
+        INSERT INTO UserT (
+            user_id,login
+        ) VALUES %s 
+        ON CONFLICT (user_id) DO NOTHING
+    """
+
+    table_insert_comment = """
+        INSERT INTO Comment VALUES %s 
+        ON CONFLICT (comment_id) DO NOTHING
+    """
+    # table_insert_commit = """
+    #     INSERT INTO Commits VALUES %s 
+    #     ON CONFLICT (commit_sha) DO NOTHING
+    # """
+
+    table_insert_payload  = """
+        INSERT INTO Payload VALUES %s 
+        ON CONFLICT (push_id) DO NOTHING
+    """
+
+    table_insert_event  = """
+        INSERT INTO Event VALUES %s 
+        ON CONFLICT (event_id) DO NOTHING
+    """
+
     # Get list of files from filepath
     all_files = ti.xcom_pull(task_ids="get_files", key="return_value")
     # all_files = get_files(filepath)
@@ -71,53 +169,61 @@ def _process(**context):
         with open(datafile, "r") as f:
             data = json.loads(f.read())
             for each in data:
-                # Print some sample data
                 
-                if each["type"] == "IssueCommentEvent":
-                    print(
-                        each["id"], 
-                        each["type"],
-                        each["actor"]["id"],
-                        each["actor"]["login"],
-                        each["repo"]["id"],
-                        each["repo"]["name"],
-                        each["created_at"],
-                        each["payload"]["issue"]["url"],
-                    )
-                else:
-                    print(
-                        each["id"], 
-                        each["type"],
-                        each["actor"]["id"],
-                        each["actor"]["login"],
-                        each["repo"]["id"],
-                        each["repo"]["name"],
-                        each["created_at"],
-                    )
+                # Insert data into repo tables 
+                col_repo = each["repo"]["id"], each["repo"]["name"], each["repo"]["url"]
+                sql_insert = table_insert_repo % str(col_repo)
+                #print(sql_insert)
+                cur.execute(sql_insert)
+                conn.commit()
 
-                # Insert data into tables here
-                insert_statement = f"""
-                    INSERT INTO actors (
-                        id,
-                        login
-                    ) VALUES ({each["actor"]["id"]}, '{each["actor"]["login"]}')
-                    ON CONFLICT (id) DO NOTHING
-                """
-                # print(insert_statement)
-                cur.execute(insert_statement)
+                # Insert data into Actor table 
+                col_actor = each["actor"]["id"], each["actor"]["login"], each["actor"]["display_login"], each["actor"]["gravatar_id"], each["actor"]["url"], each["actor"]["avatar_url"]
+                sql_insert = table_insert_actor % str(col_actor)
+                cur.execute(sql_insert)
+                conn.commit()
 
-                # Insert data into tables here
-                insert_statement = f"""
-                    INSERT INTO events (
-                        id,
-                        type,
-                        actor_id
-                    ) VALUES ('{each["id"]}', '{each["type"]}', '{each["actor"]["id"]}')
-                    ON CONFLICT (id) DO NOTHING
-                """
-                # print(insert_statement)
-                cur.execute(insert_statement)
+                # Insert data into usert tables
+                try:
+                    col_user = each["payload"]["comment"]["user"]["id"], each["payload"]["comment"]["user"]["login"]
+                    sql_insert = table_insert_user % str(col_user)
+                    cur.execute(sql_insert)
+                    conn.commit()
+                except: pass
+            
+                #Insert data into comment table
+                try: 
+                    col_comment = each["payload"]["comment"]["id"],each["payload"]["comment"]["url"],each["payload"]["comment"]["html_url"], each["payload"]["comment"]["user"]["id"]
+                    sql_insert = table_insert_comment % str(col_comment)
+                    cur.execute(sql_insert)
+                    conn.commit()
+                except: pass
 
+                #Insert data into commits table
+                # try:
+                #     col_commit = each["payload"]["commits"]["sha"],each["payload"]["commits"]["message"],each["payload"]["commits"]["url"]
+                #     sql_insert = table_insert_commit % str(col_commit)
+                #     print(sql_insert)
+                #     cur.execute(sql_insert)
+                #     conn.commit()
+                # except: pass
+
+                #Insert data into payload table
+                try: 
+                    try: col_payload = each["payload"]["push_id"],each["payload"]["size"],each["payload"]["distinct_size"],each["payload"]["ref"],each["payload"]["head"],
+                    except: col_payload = each["payload"]["push_id"],each["payload"]["size"],each["payload"]["distinct_size"],each["payload"]["ref"],each["payload"]["head"],each["payload"]["comment"]["id"]
+                    sql_insert = table_insert_payload % str(col_payload)
+                    #print(sql_insert)
+                    cur.execute(sql_insert)
+                    conn.commit()
+                except: pass
+
+                # Insert data into event table 
+                try: col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],each["payload"]["push_id"]
+                except:col_event = each["id"], each["type"], each["public"], each["created_at"], each["repo"]["id"], each["actor"]["id"],
+                sql_insert = table_insert_event % str(col_event)
+                #print(sql_insert)
+                cur.execute(sql_insert)
                 conn.commit()
 
 
