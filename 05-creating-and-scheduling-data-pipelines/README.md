@@ -1,5 +1,5 @@
 # Creating and Scheduling Data Pipelines
-![DataModel](data-model.png)
+![DataModel](S__2727976.jpg)
 <br>
 
 ### 1. เข้าไปที่ 
@@ -27,7 +27,8 @@ docker-compose up
 **หมายเหตุ:** จริง ๆ แล้วเราสามารถเอาโฟลเดอร์ `data` ไว้ที่ไหนก็ได้ที่ Airflow ที่เรารันเข้าถึงได้ แต่เพื่อความง่ายสำหรับโปรเจคนี้ เราจะนำเอาโฟลเดอร์ `data` ไว้ในโฟลเดอร์ `dags` เลย
 
 ### 4. ทำการตั้งค่าการเชื่อมต่อใน Postgres Port 8088 
-(1667409666493.jpg)
+
+(/workspace/swu-ds525/05-creating-and-scheduling-data-pipelines/1667409666493.jpg)
 <br>
 
 ### 5. ทำการเชื่อมต่อ Postgres กับ Airflow จากเมนู Admin>Connections และกรอกข้อมูลให้สอดคล้องกับการตั้งค่าใน Postgres
