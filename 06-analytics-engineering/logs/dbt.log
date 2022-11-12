@@ -25,3 +25,13 @@ Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
 Happy modeling!
 
 [0m10:10:27.883333 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f09e4646340>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f09e4646520>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f09e46460a0>]}
+
+
+============================== 2022-11-12 10:01:16.371348 | cf6f90f6-8324-4c2c-914d-791c48089885 ==============================
+[0m10:01:16.371358 [info ] [MainThread]: Running with dbt=1.2.0
+[0m10:01:16.372447 [debug] [MainThread]: running dbt with arguments {'write_json': True, 'use_colors': True, 'printer_width': 80, 'version_check': True, 'partial_parse': True, 'static_parser': True, 'profiles_dir': '/home/gitpod/.dbt', 'send_anonymous_usage_stats': True, 'event_buffer_size': 100000, 'quiet': False, 'no_print': False, 'skip_profile_setup': False, 'which': 'init', 'indirect_selection': 'eager'}
+[0m10:01:16.372702 [debug] [MainThread]: Tracking: tracking
+[0m10:01:16.417675 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbe2ad47c40>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbe2ad479a0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbe2ad47a00>]}
+[0m10:01:16.418346 [info ] [MainThread]: Creating dbt configuration folder at /home/gitpod/.dbt
+[0m10:01:56.488519 [info ] [MainThread]: A project called jaffle already exists here.
+[0m10:01:56.489270 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbe2ad477c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbe2ad479d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7fbe2ad47880>]}
