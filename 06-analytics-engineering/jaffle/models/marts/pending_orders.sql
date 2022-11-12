@@ -15,7 +15,7 @@ int_orders_customers_joined as (
         , customer_name
 
     from int_orders_customers_joined
-    where order_status = 'completed'
+    where order_status = 'pending'
 
 )
 
