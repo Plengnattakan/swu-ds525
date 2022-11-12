@@ -19,9 +19,10 @@ models:
         tests:
           - unique
           - not_null
+
   - name: completed_orders
-    description: "Completed orders with Customer name and lastname"
-    columns :
+    description: "Completed orders with first name and last name"
+    columns:
       - name: id
         tests:
           - unique
