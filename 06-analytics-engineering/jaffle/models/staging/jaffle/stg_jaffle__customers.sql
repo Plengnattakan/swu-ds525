@@ -1,17 +1,19 @@
--- CTE => Common Table Expression
-
 with
+
 source as (
-    select * from {{source('jaffle','jaffle_shop_orders')}}
-)
-, b as (
-    select * from a
+
+    select * from {{ source('jaffle', 'jaffle_shop_customers') }}
+
 )
 
-,final (
+, final as (
+
     select
         id
-        ,first_name | ' ' | last_name
-        from
-        source
+        , first_name || ' ' || last_name as name
+
+    from source
+
 )
+
+select * from final
