@@ -1,0 +1,9 @@
+age,job_id,edu_id,contact,duration,campaign,pdays,outcome
+30,5,3,cellular,304,1,94,yes
+36,10,2,cellular,324,1,182,no
+44,2,2,telephone,119,1,89,no
+44,10,4,cellular,189,1,185,no
+34,2,2,cellular,275,1,-1,no
+33,1,2,cellular,253,1,284,yes
+36,10,3,cellular,129,1,-1,no
+50,5,3,telephone,293,3,508,no

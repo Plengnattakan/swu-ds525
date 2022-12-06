@@ -1,0 +1,11 @@
+age,job_id,edu_id,contact,duration,campaign,pdays,outcome
+61,5,3,cellular,318,2,283,no
+37,5,3,cellular,114,1,234,no
+74,6,3,cellular,172,2,161,no
+39,5,3,cellular,129,2,97,no
+42,1,2,cellular,146,1,-1,no
+50,5,3,cellular,455,1,544,yes
+32,5,3,cellular,96,1,201,no
+36,5,3,cellular,255,1,88,yes
+63,6,2,cellular,423,1,-1,yes
+46,1,2,cellular,137,1,97,no
