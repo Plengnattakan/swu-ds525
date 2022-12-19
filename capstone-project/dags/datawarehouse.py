@@ -82,9 +82,9 @@ truncate_table_queries = [
 
 # cat ~/.aws/credentials
 
-access_key_id = "ASIAUDZFW3BZA553QT5L"
-secret_access_key = "l26ktFobk0iEt93APaej15XB83Yo19Rlt5xSD1nD"
-session_token  = "FwoGZXIvYXdzEFUaDDSoBsxOH5ogg6wHMiLQAbJWfIDBvXBVaIFCa/g4yr/mxHdsoDpl6JWCICLojIVTmJTymv6NaZXhHardmDuLuOfn1fTUMeeUm8aRrRL6DcZDb6MS6e66Zek4NzSst9JAfKS0QJvQvH2eUdSGHkPOVG+eXQa64S2HrqRT6dRGpVX0mzWWj5RYEtI1pjFvJkm92fj8z3wPSuG8yPwAUUg223GgnYIMPXlPPtUG6waVLQcexIcnuSuIAPni2IgmlwrV0q6fRwdYNY80hj90zy1F7efcsmie2/z291qQS1pgBlUo3IHQnAYyLXWXUOcX88WUPOaqBoj5yc+SO7Dzel7n0eb/n6vvKVvzyphQ6RsZfzflwqlGMw=="
+access_key_id = "ASIAUDZFW3BZGWGN42NX"
+secret_access_key = "U1agzyUKJt8WoZduUWwQV1shCFo8vgBru7Fb1ETA"
+session_token  = "FwoGZXIvYXdzEP7//////////wEaDFDKnHgh0/JvywAzcSLQAW55H3XXxYEIGQ489hpNGX0hJH069yZykxaHgnOg+FnjhwGzxvjpGb9Qvki7dnHnAIJMRs2YAjkq817qqwVdoQ9RQ++ANs7gi5b4MI8BtbZOoXFC7hu54/y96uL/fJkQoyl9ztZUPJzMqC0WgbabeAc41RcsigJ8XhMJ/fKpO4efxzguapUR+k34oDE0Z7GYGEPj+zMm5TV51lLzfy6lzf6P122ghFclKA19TtScd+AIs/s77fpq6zAcCk+TSzOQtfjm6hMPkNw0/D6vOIgXpuAo0Yn1nAYyLecVk1bEIoMfUYWddyZx70R/hEdnrBegUBAJObBkum0iingmlQ3sRtKGaEwiMA=="
 copy_table_queries = [
     """
     COPY edu 
